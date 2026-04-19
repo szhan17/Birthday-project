@@ -576,17 +576,22 @@ section { position: relative; }
     overflow: hidden;
     box-sizing: border-box;
     touch-action: pan-y;
-    /* Height set here so every browser shows exactly one image at a time.
-       JS sets the pixel width via slide.style.width = container.offsetWidth + 'px' */
     height: 460px;
+    background: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: center center;
+    object-fit: contain;
     display: block;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
 }
 
 .carousel-caption {

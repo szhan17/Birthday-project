@@ -40,6 +40,9 @@ html {
     font-size: 16px;
 }
 
+/* Ensure images respect embedded EXIF orientation when possible */
+img { image-orientation: from-image; -webkit-image-orientation: from-image; }
+
 body {
     font-family: var(--font-body);
     background-color: var(--cream);

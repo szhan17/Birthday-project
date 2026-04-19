@@ -142,6 +142,9 @@ async function loadImages() {
 
     buildCarousel();
     buildGalleryGrid();
+
+    // Check for unsupported formats (HEIC) and surface a friendly warning
+    checkImageFormats();
 }
 
 async function detectImagesSequential() {
@@ -174,6 +177,30 @@ function showNoImagesUI() {
     const carWrap = $('.carousel-wrapper');
     if (noMsg)    noMsg.style.display = 'block';
     if (carWrap)  carWrap.style.display = 'none';
+}
+
+function checkImageFormats() {
+    if (!state.images || state.images.length === 0) return;
+    const heic = state.images.filter(s => /\.heic$/i.test(s));
+    if (heic.length === 0) return;
+    console.warn('HEIC images detected — browsers may not render these. Convert to JPG/WEBP/AVIF:', heic);
+    if (!document.getElementById('formatWarning')) {
+        const warn = document.createElement('div');
+        warn.id = 'formatWarning';
+        warn.style.position = 'fixed';
+        warn.style.top = '72px';
+        warn.style.left = '50%';
+        warn.style.transform = 'translateX(-50%)';
+        warn.style.background = 'rgba(255, 200, 60, 0.98)';
+        warn.style.color = '#072';
+        warn.style.padding = '8px 14px';
+        warn.style.borderRadius = '10px';
+        warn.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)';
+        warn.style.zIndex = '1200';
+        warn.textContent = 'Some images are in HEIC format which may not display in all browsers — convert them to JPG/WebP for best compatibility.';
+        document.body.appendChild(warn);
+        setTimeout(() => { warn.style.opacity = '0'; warn.style.transition = 'opacity 0.6s ease'; setTimeout(() => warn.remove(), 2600); }, 6000);
+    }
 }
 
 /* ============================================================

@@ -212,6 +212,8 @@ function buildCarousel() {
     carousel.innerHTML = '';
     dotsWrap.innerHTML = '';
 
+    const slideBasis = state.images.length > 0 ? (100 / state.images.length) : 100;
+
     state.images.forEach((src, i) => {
         // Slide
         const slide   = el('div', 'carousel-slide');
@@ -219,6 +221,8 @@ function buildCarousel() {
         img.src        = src;
         img.alt        = `Memory ${i + 1}`;
         img.loading    = 'lazy';
+        slide.style.width = `${slideBasis}%`;
+        slide.style.flex = `0 0 ${slideBasis}%`;
             const caption = el('div', 'carousel-caption');
             caption.textContent = CONFIG.captions[i % CONFIG.captions.length];
             slide.appendChild(img);
@@ -239,6 +243,8 @@ function buildCarousel() {
         dot.onclick = () => goToSlide(i);
         dotsWrap.appendChild(dot);
     });
+
+    carousel.style.width = `${state.images.length * 100}%`;
 
     updateCarousel();
     startAutoSlide();
@@ -267,7 +273,8 @@ function goToSlide(index) {
 function updateCarousel() {
     const carousel = $('#carousel');
     if (!carousel) return;
-    carousel.style.transform = `translateX(-${state.currentSlide * 100}%)`;
+    const step = state.images.length > 0 ? (100 / state.images.length) : 100;
+    carousel.style.transform = `translateX(-${state.currentSlide * step}%)`;
 
     $$('.dot').forEach((dot, i) => {
         dot.classList.toggle('active', i === state.currentSlide);

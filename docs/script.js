@@ -325,37 +325,26 @@ function buildGalleryGrid() {
     grid.innerHTML = '';
 
     state.images.forEach((src, i) => {
-        const item    = el('div', 'gallery-item');
+        const item = el('div', 'gallery-item');
         item.setAttribute('role', 'listitem');
         item.setAttribute('tabindex', '0');
         item.setAttribute('aria-label', `Open photo ${i + 1}`);
+        // Use CSS animation (not JS opacity) so items are never stuck invisible.
+        item.style.animationDelay = `${i * 55}ms`;
 
-        const img     = el('img');
-        img.src        = src;
-        img.alt        = `Memory ${i + 1}`;
-        img.loading    = 'lazy';
+        const img = document.createElement('img');
+        img.src      = src;
+        img.alt      = `Memory ${i + 1}`;
+        img.loading  = i < 6 ? 'eager' : 'lazy';
+        img.decoding = 'async';
 
         const overlay = el('div', 'gallery-overlay', '<span>🔍</span>');
-
         item.append(img, overlay);
 
         item.addEventListener('click',   () => openLightbox(i));
         item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openLightbox(i); });
 
-        // Staggered entrance animation
-        item.style.opacity   = '0';
-        item.style.transform = 'scale(0.82)';
-        item.style.transition = `opacity 0.45s ease ${i * 65}ms, transform 0.45s ease ${i * 65}ms`;
-
         grid.appendChild(item);
-
-        // Trigger entrance via rAF to allow transition
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                item.style.opacity   = '1';
-                item.style.transform = 'scale(1)';
-            });
-        });
     });
 }
 

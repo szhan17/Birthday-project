@@ -584,13 +584,11 @@ section { position: relative; }
 }
 
 .carousel-slide img {
-    /* Prevent the browser from upscaling small images to fill the slide.
-       Keep images at natural size while fitting inside the slide. */
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: contain;
+    /* Restored: make images fill the slide (compilation look). */
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
     display: block;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);

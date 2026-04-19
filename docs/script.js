@@ -125,12 +125,27 @@ function initFloatingDecorations() {
      3. If nothing found, show the setup instructions panel.
    ============================================================ */
 async function loadImages() {
-    try {
-        const res = await fetch('images-manifest.json');
-        if (!res.ok) throw new Error('manifest-missing');
-        const data = await res.json();
-        state.images = (data.images || []).filter(Boolean);
-    } catch {
+    // Try common manifest locations so the site works when served from a repo subpath.
+    const manifestCandidates = [
+        'images-manifest.json',
+        './images-manifest.json',
+        '../images-manifest.json',
+        window.location.pathname.replace(/\/$/, '') + '/images-manifest.json'
+    ];
+    let got = false;
+    for (const p of manifestCandidates) {
+        try {
+            const res = await fetch(p);
+            if (!res.ok) continue;
+            const data = await res.json();
+            state.images = (data.images || []).filter(Boolean);
+            got = true;
+            break;
+        } catch (e) {
+            // ignore and try next
+        }
+    }
+    if (!got) {
         // Manifest missing — attempt sequential detection
         state.images = await detectImagesSequential();
     }
@@ -142,6 +157,13 @@ async function loadImages() {
 
     buildCarousel();
     buildGalleryGrid();
+
+    // Safety: if gallery didn't render for some reason, force rebuild once more.
+    const grid = $('#galleryGrid');
+    if (grid && grid.children.length === 0 && state.images.length > 0) {
+        console.warn('Gallery initially empty — rebuilding gallery.');
+        buildGalleryGrid();
+    }
 
     // Check for unsupported formats (HEIC) and surface a friendly warning
     checkImageFormats();

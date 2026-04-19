@@ -566,33 +566,26 @@ section { position: relative; }
 
 .carousel {
     display: flex;
-    width: 100%;
     transition: transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     will-change: transform;
 }
 
 .carousel-slide {
-    width: 100%;
-    min-width: 100%;
-    flex: 0 0 100%;
-    /* Use an aspect ratio so the slide scales with viewport width instead of a fixed pixel height
-       This prevents the image from appearing overly zoomed on narrow mobile screens (iPhones).
-       The max-height prevents it from becoming too tall on very small viewports. */
-    height: auto;
-    aspect-ratio: 16 / 9;
-    max-height: 60vh;
-    position: relative;
     flex-shrink: 0;
+    position: relative;
     overflow: hidden;
+    box-sizing: border-box;
+    touch-action: pan-y;
+    /* Height set here so every browser shows exactly one image at a time.
+       JS sets the pixel width via slide.style.width = container.offsetWidth + 'px' */
+    height: 460px;
 }
 
-/* Ensure slides behave consistently on mobile */
-.carousel-slide { box-sizing: border-box; touch-action: pan-y; }
-.carousel-slide img { object-position: center center; }
-
 .carousel-slide img {
-    width: 100%; height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
+    object-position: center center;
     display: block;
 }
 
@@ -1245,10 +1238,7 @@ section { position: relative; }
     .tl-left  .timeline-dot,
     .tl-right .timeline-dot { left: 10px; right: auto; }
 
-    .carousel-slide {
-        aspect-ratio: 5 / 4;
-        max-height: 55vh;
-    }
+    .carousel-slide { height: 300px; }
 
     .surprise-section { gap: 40px; }
     .closing-message { padding: 36px 32px; }
@@ -1269,10 +1259,7 @@ section { position: relative; }
     .hero-title { font-size: 2.1rem; }
     .hero-subtitle { font-size: 0.95rem; }
 
-    .carousel-slide {
-        aspect-ratio: 4 / 5;
-        max-height: 62vh;
-    }
+    .carousel-slide { height: 240px; }
 
     .gallery-grid { grid-template-columns: repeat(2, 1fr); }
 

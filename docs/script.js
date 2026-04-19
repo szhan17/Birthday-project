@@ -273,8 +273,8 @@ function goToSlide(index) {
 function updateCarousel() {
     const carousel = $('#carousel');
     if (!carousel) return;
-    const step = state.images.length > 0 ? (100 / state.images.length) : 100;
-    carousel.style.transform = `translateX(-${state.currentSlide * step}%)`;
+    // Translate by exact pixels so one slide fills the container on every device.
+    carousel.style.transform = `translateX(-${state.currentSlide * getSlideWidth()}px)`;
 
     $$('.dot').forEach((dot, i) => {
         dot.classList.toggle('active', i === state.currentSlide);
@@ -484,6 +484,17 @@ function drawConfetti(ctx, canvas) {
 }
 
 window.addEventListener('resize', () => {
+    // Recalculate carousel slide widths when the viewport changes (orientation flip, resize).
+    if (state.images.length > 0) {
+        const carousel = $('#carousel');
+        const slideWidth = getSlideWidth();
+        if (carousel) {
+            carousel.style.width = `${state.images.length * slideWidth}px`;
+            $$('.carousel-slide').forEach(slide => { slide.style.width = `${slideWidth}px`; });
+        }
+        updateCarousel();
+    }
+    // Resize confetti canvas to match new viewport.
     const canvas = $('#confettiCanvas');
     canvas.width  = window.innerWidth;
     canvas.height = window.innerHeight;

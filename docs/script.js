@@ -548,6 +548,22 @@ function initMusicToggle() {
         audio.appendChild(s);
     }
 
+    // Debug listeners to help diagnose playback issues on the deployed site
+    try {
+        audio.addEventListener('error', (e) => console.error('Audio element error', e, audio.error));
+        audio.addEventListener('loadeddata', () => console.info('Audio loadeddata', audio.currentSrc));
+        audio.addEventListener('canplaythrough', () => console.info('Audio canplaythrough', audio.currentSrc));
+        audio.addEventListener('play', () => console.info('Audio play event', audio.currentSrc));
+        audio.addEventListener('pause', () => console.info('Audio pause event', audio.currentSrc));
+
+        // Quick fetch probe to surface HTTP status and content-type in the console
+        setTimeout(() => {
+            fetch(srcPath, { method: 'GET', cache: 'no-store' })
+                .then(res => console.info('Audio fetch probe:', res.status, res.headers.get('content-type')))
+                .catch(err => console.error('Audio fetch probe failed:', err));
+        }, 800);
+    } catch (e) { console.warn('Audio debug listeners failed', e); }
+
     btn.addEventListener('click', async () => {
         try {
             if (state.musicPlaying) {

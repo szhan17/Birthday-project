@@ -536,28 +536,35 @@ function revealSurprise() {
    BACKGROUND MUSIC TOGGLE
    ============================================================ */
 function initMusicToggle() {
-    const btn   = $('#musicToggle');
+    const btn = $('#musicToggle');
     const audio = $('#bgMusic');
+    const srcPath = 'music/aphrodite.mp3';
 
-    btn.addEventListener('click', () => {
-        // No audio source configured
-        const hasSrc = audio.querySelector('source') || audio.src;
-        if (!hasSrc || audio.src === window.location.href) {
-            btn.title = '🎵 Add a .mp3 to /music/ and uncomment the <source> in index.html to enable music!';
-            btn.textContent = '🎵';
-            return;
-        }
+    // Ensure a source element is present (keeps HTML and JS in sync)
+    if (!audio.querySelector('source') && !audio.src) {
+        const s = document.createElement('source');
+        s.src = srcPath;
+        s.type = 'audio/mpeg';
+        audio.appendChild(s);
+    }
 
-        if (state.musicPlaying) {
-            audio.pause();
-            btn.textContent = '🔇';
-            btn.setAttribute('aria-label', 'Play music');
-        } else {
-            audio.play().catch(() => {});
-            btn.textContent = '🎵';
-            btn.setAttribute('aria-label', 'Pause music');
+    btn.addEventListener('click', async () => {
+        try {
+            if (state.musicPlaying) {
+                audio.pause();
+                btn.textContent = '🔇';
+                btn.setAttribute('aria-label', 'Play music');
+            } else {
+                await audio.play();
+                btn.textContent = '🔊';
+                btn.setAttribute('aria-label', 'Pause music');
+            }
+            state.musicPlaying = !state.musicPlaying;
+        } catch (err) {
+            // Play failed (missing file or autoplay restrictions)
+            btn.title = 'Add music/aphrodite.mp3 to /music or interact with the page to allow playback.';
+            alert('Cannot play music — make sure the file exists at /music/aphrodite.mp3 and interact with the page (click) to allow playback.');
         }
-        state.musicPlaying = !state.musicPlaying;
     });
 }
 

@@ -541,7 +541,7 @@ section { position: relative; }
    GALLERY SECTION
    ============================================================ */
 .gallery-section {
-    padding: 110px 40px 100px;
+    padding: 110px 40px 140px;
     background: linear-gradient(180deg, var(--yellow-light) 0%, #103060 100%);
 }
 
@@ -658,7 +658,8 @@ section { position: relative; }
     grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: 14px;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 40px auto 0;
+    padding: 0 20px;
 }
 
 .gallery-item {

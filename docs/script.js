@@ -555,6 +555,10 @@ function initMusicToggle() {
                 btn.textContent = '🔇';
                 btn.setAttribute('aria-label', 'Play music');
             } else {
+                // Ensure source is loaded before playing
+                try { audio.load(); } catch (e) {}
+                btn.textContent = '⏳';
+                btn.setAttribute('aria-label', 'Loading music');
                 await audio.play();
                 btn.textContent = '🔊';
                 btn.setAttribute('aria-label', 'Pause music');
@@ -562,8 +566,12 @@ function initMusicToggle() {
             state.musicPlaying = !state.musicPlaying;
         } catch (err) {
             // Play failed (missing file or autoplay restrictions)
-            btn.title = 'Add music/aphrodite.mp3 to /music or interact with the page to allow playback.';
-            alert('Cannot play music — make sure the file exists at /music/aphrodite.mp3 and interact with the page (click) to allow playback.');
+            const src = audio.currentSrc || (audio.querySelector && audio.querySelector('source') && audio.querySelector('source').src) || 'music/aphrodite.mp3';
+            btn.title = `Failed to play ${src}`;
+            alert(`Cannot play music. Source: ${src}\n\nPossible reasons:\n- The file is missing at this path.\n- Browser blocked playback (try clicking somewhere on the page first).\n- Network or permission error.\n\nOpen developer console for more details.`);
+            console.error('Audio play error:', err, 'source:', src);
+            btn.textContent = '🎵';
+            btn.setAttribute('aria-label', 'Toggle music');
         }
     });
 }

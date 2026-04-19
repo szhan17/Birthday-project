@@ -572,7 +572,12 @@ section { position: relative; }
 
 .carousel-slide {
     min-width: 100%;
-    height: 460px;
+    /* Use an aspect ratio so the slide scales with viewport width instead of a fixed pixel height
+       This prevents the image from appearing overly zoomed on narrow mobile screens (iPhones).
+       The max-height prevents it from becoming too tall on very small viewports. */
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 60vh;
     position: relative;
     flex-shrink: 0;
 }

@@ -219,10 +219,18 @@ function buildCarousel() {
         img.src        = src;
         img.alt        = `Memory ${i + 1}`;
         img.loading    = 'lazy';
-        const caption = el('div', 'carousel-caption');
-        caption.textContent = CONFIG.captions[i % CONFIG.captions.length];
-        slide.append(img, caption);
-        carousel.appendChild(slide);
+            const caption = el('div', 'carousel-caption');
+            caption.textContent = CONFIG.captions[i % CONFIG.captions.length];
+            slide.appendChild(img);
+            slide.appendChild(caption);
+            // Make slides tappable/clickable to open the lightbox like the grid items
+            slide.style.cursor = 'pointer';
+            slide.setAttribute('role', 'button');
+            slide.setAttribute('aria-label', `Open photo ${i + 1}`);
+            slide.tabIndex = 0;
+            slide.addEventListener('click', () => openLightbox(i));
+            slide.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openLightbox(i); });
+            carousel.appendChild(slide);
 
         // Dot
         const dot = el('button', 'dot' + (i === 0 ? ' active' : ''));

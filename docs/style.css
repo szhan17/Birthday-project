@@ -559,6 +559,9 @@ section { position: relative; }
     overflow: hidden;
     box-shadow: var(--shadow-lg);
     background: #000;
+    /* iOS Safari: force compositing layer so overflow+border-radius clips child transforms */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 .carousel {
@@ -568,10 +571,12 @@ section { position: relative; }
 }
 
 .carousel-slide {
-    min-width: 100%;
+    /* flex: 0 0 100% is more reliable than min-width on iOS Safari */
+    -webkit-flex: 0 0 100%;
+    flex: 0 0 100%;
     height: 460px;
     position: relative;
-    flex-shrink: 0;
+    overflow: hidden;
 }
 
 .carousel-slide img {
@@ -651,9 +656,15 @@ section { position: relative; }
     box-shadow: 0 6px 20px rgba(0,0,0,0.35);
     cursor: pointer;
     position: relative;
-    aspect-ratio: 1 / 1;
+    /* padding-top: 100% replaces aspect-ratio: 1/1 — iOS Safari < 15 does not support
+       aspect-ratio, causing containers to collapse to 0 height (images invisible,
+       click area = 0px). The padding-top hack is universally supported. */
+    padding-top: 100%;
     transition: transform 0.3s ease, box-shadow 0.3s;
     background: var(--blue);
+    /* Remove 300ms tap delay and blue flash on iOS */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .gallery-item:hover {
@@ -662,7 +673,12 @@ section { position: relative; }
 }
 
 .gallery-item img {
-    width: 100%; height: 100%;
+    /* Must be absolute when parent uses the padding-top aspect-ratio hack */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
     transition: transform 0.5s ease;
@@ -773,9 +789,13 @@ section { position: relative; }
 }
 
 .lightbox-img-wrap img {
+    /* width/height: auto lets iOS Safari correctly compute image dimensions inside flex */
+    width: auto;
+    height: auto;
     max-width: 100%;
     max-height: 78vh;
     object-fit: contain;
+    display: block;
     border-radius: var(--radius-sm);
     box-shadow: 0 24px 70px rgba(0,0,0,0.6);
     transition: opacity 0.2s ease;

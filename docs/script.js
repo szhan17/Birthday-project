@@ -279,8 +279,9 @@ function buildGalleryGrid() {
         item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openLightbox(i); });
 
         // Staggered entrance animation
+        // translateZ(0) keeps the GPU compositing layer so overflow:hidden clips correctly on iOS Safari
         item.style.opacity   = '0';
-        item.style.transform = 'scale(0.82)';
+        item.style.transform = 'scale(0.82) translateZ(0)';
         item.style.transition = `opacity 0.45s ease ${i * 65}ms, transform 0.45s ease ${i * 65}ms`;
 
         grid.appendChild(item);
@@ -289,7 +290,7 @@ function buildGalleryGrid() {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 item.style.opacity   = '1';
-                item.style.transform = 'scale(1)';
+                item.style.transform = 'scale(1) translateZ(0)';
             });
         });
     });
